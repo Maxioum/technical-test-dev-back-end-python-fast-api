@@ -1,12 +1,12 @@
 ## Installation
 
-1. clone the repository
+1. Clone the repository
 
 ```
-git clone https://github.com/Maxioum/{repo}.git && cd {repo}
+git clone https://github.com/Maxioum/technical-test-dev-back-end-python-fast-api.git && cd technical-test-dev-back-end-python-fast-api
 ```
 
-1. install [uv](https://docs.astral.sh/uv/)
+1. Install [uv](https://docs.astral.sh/uv/)
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -24,17 +24,17 @@ uv sync
 uv run uvicorn app.main:app --reload
 ```
 
-Example requests:
+Example request:
 
 Here’s a set of simple curl examples you can use to interact with the app once it’s running (default at http://localhost:8000):
 
-1. Create a User
+1. Create a Ticket
 
 ```bash
 curl -X POST "http://localhost:8000/api/v1/tickets" -H "Content-Type: application/json" -d '{"title": "Feature: Add Ticket Type", "description": "Add different types of ticket, such as feature, bug etc"}'
 ```
 
-2. Get All Users
+2. Get All Tickets
 
 ```bash
 curl -X GET "http://localhost:8000/api/v1/tickets"
@@ -88,7 +88,7 @@ uv sync --dev
 uv run pytest
 ```
 
-3. Run test with coverage
+3. Run tests with coverage
 
 ```bash
 uv run pytest . --cov
