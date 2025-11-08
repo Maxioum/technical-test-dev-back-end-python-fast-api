@@ -1,7 +1,8 @@
 import uuid
 from typing import Optional
 
-from sqlalchemy import update
+from fastapi import HTTPException
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm import Session
 
 from app.db.tickets_schema import Status, Ticket
@@ -11,10 +12,21 @@ class TicketsService:
     def __init__(self, session: Session) -> None:
         self._db = session
 
-    def get_ticket(self, ticket_id: uuid.UUID) -> Ticket | None:
+    def get_ticket(self, ticket_id: uuid.UUID) -> Ticket:
         """Get a ticket by its id."""
 
-        return self._db.query(Ticket).filter(Ticket.id == ticket_id).one()
+        try:
+            ticket = self._db.query(Ticket).filter(Ticket.id == ticket_id).one()
+        except NoResultFound as e:
+            raise HTTPException(
+                status_code=404, detail=f"Ticket with id {ticket_id} not found"
+            ) from e
+        except MultipleResultsFound as e:
+            raise HTTPException(
+                status_code=409, detail=f"Multiple Tickets with id {ticket_id} found"
+            ) from e
+
+        return ticket
 
     def create_ticket(self, title: str, description: Optional[str] = None) -> Ticket:
         """Create a ticket with a title and an optional description."""

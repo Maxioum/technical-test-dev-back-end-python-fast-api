@@ -1,4 +1,5 @@
 from typing import Generator
+from uuid import UUID, uuid4
 
 from pytest import fixture
 from sqlalchemy import StaticPool, create_engine
@@ -35,3 +36,12 @@ def ticket(tickets_service: TicketsService) -> Ticket:
     title = "Title"
     description = "description"
     return tickets_service.create_ticket(title=title, description=description)
+
+
+@fixture
+def non_existing_uuid(ticket: Ticket) -> UUID:
+    uuid_ = uuid4()
+
+    assert uuid_ != ticket.id
+
+    return uuid_

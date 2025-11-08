@@ -31,10 +31,6 @@ def get_ticket(
     ticket_id: uuid.UUID, service: TicketsService = Depends(get_ticket_service)
 ) -> Ticket:
     ticket = service.get_ticket(ticket_id)
-
-    if not ticket:
-        raise HTTPException(status_code=404, detail="Ticket not found")
-
     return ticket
 
 
