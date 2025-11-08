@@ -21,4 +21,4 @@ dev = [
 [tool.pytest.ini_options]
 pythonpath = ["."]
 addopts = "-lsv"
-testpaths = ["tests"]
+testpaths = ["tests", "integration"]
