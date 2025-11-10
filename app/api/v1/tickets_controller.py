@@ -4,7 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.db.tickets_schema import SessionLocal, Ticket
 from app.models.tickets_models import TicketCreate, TicketRead
-from app.services.tickets_service import TicketsService
+from app.services.tickets_service import (
+    MultipleTicketsFoundError,
+    TicketNotFoundError,
+    TicketsService,
+)
 
 router = APIRouter()
 
@@ -30,7 +34,12 @@ def get_all_tickets(service: TicketsService = Depends(get_ticket_service)) -> Ti
 def get_ticket(
     ticket_id: uuid.UUID, service: TicketsService = Depends(get_ticket_service)
 ) -> Ticket:
-    ticket = service.get_ticket(ticket_id)
+    try:
+        ticket = service.get_ticket(ticket_id)
+    except TicketNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    except MultipleTicketsFoundError as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
     return ticket
 
 

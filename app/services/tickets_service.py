@@ -1,11 +1,18 @@
 import uuid
 from typing import Optional
 
-from fastapi import HTTPException
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm import Session
 
 from app.db.tickets_schema import Status, Ticket
+
+
+class TicketNotFoundError(Exception):
+    pass
+
+
+class MultipleTicketsFoundError(Exception):
+    pass
 
 
 class TicketsService:
@@ -18,12 +25,10 @@ class TicketsService:
         try:
             ticket = self._db.query(Ticket).filter(Ticket.id == ticket_id).one()
         except NoResultFound as e:
-            raise HTTPException(
-                status_code=404, detail=f"Ticket with id {ticket_id} not found"
-            ) from e
+            raise TicketNotFoundError(f"Ticket with id {ticket_id} not found") from e
         except MultipleResultsFound as e:
-            raise HTTPException(
-                status_code=409, detail=f"Multiple Tickets with id {ticket_id} found"
+            raise MultipleTicketsFoundError(
+                f"Multiple Tickets with id {ticket_id} found"
             ) from e
 
         return ticket

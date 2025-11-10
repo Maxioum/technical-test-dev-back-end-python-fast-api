@@ -1,10 +1,9 @@
 from uuid import UUID
 
 import pytest
-from fastapi import HTTPException
 
 from app.db.tickets_schema import Status, Ticket
-from app.services.tickets_service import TicketsService
+from app.services.tickets_service import TicketNotFoundError, TicketsService
 
 
 def test_create_ticket(tickets_service: TicketsService) -> None:
@@ -24,9 +23,8 @@ def test_get_ticket(tickets_service: TicketsService, ticket: Ticket) -> None:
 def test_get_ticket_missing(
     tickets_service: TicketsService, non_existing_uuid: UUID
 ) -> None:
-    with pytest.raises(HTTPException) as e:
+    with pytest.raises(TicketNotFoundError):
         tickets_service.get_ticket(non_existing_uuid)
-    assert e.value.status_code == 404
 
 
 def test_get_all_tickets(tickets_service: TicketsService, ticket: Ticket) -> None:
@@ -50,11 +48,10 @@ def test_modify_ticket_missing(
     new_description = "new_description"
     new_title = "new_title"
 
-    with pytest.raises(HTTPException) as e:
+    with pytest.raises(TicketNotFoundError):
         tickets_service.modify_ticket(
             non_existing_uuid, title=new_title, description=new_description
         )
-    assert e.value.status_code == 404
 
 
 def test_close_ticket(tickets_service: TicketsService, ticket: Ticket) -> None:
@@ -66,6 +63,5 @@ def test_close_ticket(tickets_service: TicketsService, ticket: Ticket) -> None:
 def test_close_ticket_missing(
     tickets_service: TicketsService, non_existing_uuid: UUID
 ) -> None:
-    with pytest.raises(HTTPException) as e:
+    with pytest.raises(TicketNotFoundError):
         tickets_service.close_ticket(non_existing_uuid)
-    assert e.value.status_code == 404
